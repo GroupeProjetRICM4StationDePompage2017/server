@@ -1,7 +1,10 @@
 <?php
 
 	require_once('sql.php');
-	$existe = identification($_POST['login'],$_POST['mdp']);
+	require_once('MaBD.php');
+
+	$sql = new SQL(MaBD::getInstance());
+	$existe = $sql->identification($_POST['login'],$_POST['mdp']);
 
 	if($existe!=NULL)
 	{

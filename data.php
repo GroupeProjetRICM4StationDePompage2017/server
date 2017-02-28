@@ -1,6 +1,7 @@
 <?php
 
 	require_once('sql.php');
+	require_once('MaBD.php');
 
 	function isMonth($month)
 	{
@@ -49,11 +50,12 @@
 
 
 
+	$sql = new SQL(MaBD::getInstance());
 	if(isset($_GET["periode"])) //SOIT LES N DERNIERES VALEURS SOIT LES DONNEES D UN MOIS 
 	{
 		if($_GET["periode"]=="24")//on shouhaite les n dernière valeur
 		{
-			echo getLastHourData(24);
+			echo $sql->getLastHourData(24);
 		}
 		elseif (isset($_GET["year"]))//GET MONTH
 		{
@@ -64,7 +66,7 @@
 			}
 			else
 			{
-				echo  getMonthData($m,$_GET["year"]);
+				echo  $sql->getMonthData($m,$_GET["year"]);
 			}
 		}
 		else
@@ -75,7 +77,7 @@
 	else
 	{
 		//renvoyer la dernière valeur
-		echo getLastData();
+		echo $sql->getLastData();
 	}
 
 
