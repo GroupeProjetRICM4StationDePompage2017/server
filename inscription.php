@@ -9,11 +9,11 @@
 	{
 		$res = $sql->addUser($_POST["login"],$_POST["mdp"],$_POST["nom"],$_POST["prenom"],$_POST["jar"]);
 		if($res){echo '[{"message":"True"}]';}
-		else{echo '[{"message":"False", "erreur"="Problème lors de l\'insertion"}]';}
+		else{echo '[{"message":"False", "erreur":"Problème lors de l\'insertion"}]';}
 	}
 	else
 	{
-		echo '[{"message":"False", "erreur"="Problème champ manquant"}]';
+		echo '[{"message":"False", "erreur":"Problème champ manquant"}]';
 	}
 
 

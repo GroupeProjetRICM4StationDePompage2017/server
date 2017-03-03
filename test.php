@@ -56,7 +56,7 @@
       curl_close($curl);
       echo $sh4Code;*/
 
-      $sh4 = 'login=la_scolopendre&mdp=le_cache_oeil&levelrequire=8';
+      /*$sh4 = 'login=la_scolopendre&mdp=le_cache_oeil&levelrequire=8';
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_URL, "http://localhost/projet/server/ordres.php"); //Page sur laquelle envoyer les POST autrement dit la page vers laquelle pointe le formulaire
       curl_setopt($curl, CURLOPT_POST, 1);
@@ -64,7 +64,7 @@
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
       $sh4Code = curl_exec($curl); 
       curl_close($curl);
-      echo $sh4Code;
+      echo $sh4Code;*/
 
     ?>
 
@@ -73,7 +73,12 @@
     <p>Votre mot de passe : <input type="password" name="mdp" /></p>
     <p><input type="submit" value="OK"></p>
     </form>-->
-
+    
+    <form method="post" action="verification.php">
+    <p>Votre Login : <input type="text" name="login" /></p>
+    <p>Votre mot de passe : <input type="password" name="mdp" /></p>
+    <p><input type="submit" value="OK"></p>
+    </form>
 
   </body>
 

@@ -15,8 +15,8 @@
 		}
 		else
 		{
-			echo '[{"message":"False", "erreur"="Problème lors de l\'insertion"}]';
+			echo '[{"message":"False", "erreur":"Problème lors de l\'insertion"}]';
 		}
 	}
-	else{echo '[{"message":"False", "erreur"="Problème champ manquant"}]';}
+	else{echo '[{"message":"False", "erreur":"Problème champ manquant"}]';}
 ?>

@@ -12,11 +12,11 @@
 		{
 			echo '[{"message":"True"}]';
 		}
-		else{echo '[{"message":"False", "erreur"="Problème lors de l\'insertion des données"}]';}
+		else{echo '[{"message":"False", "erreur":"Problème lors de l\'insertion des données"}]';}
 	}
 	else
 	{
-		echo '[{"message":"False", "erreur"="Problème champ manquant"}]';
+		echo '[{"message":"False", "erreur":"Problème champ manquant"}]';
 	}
 	
 
