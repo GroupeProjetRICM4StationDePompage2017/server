@@ -10,13 +10,13 @@
 		$res = $sql->addData($_POST["id"],$_POST["date"],$_POST["time"],$_POST["level"],$_POST["state"],$_POST["levelb"]);
 		if($res)
 		{
-			echo '[{"message":True}]';
+			echo '[{"message":"True"}]';
 		}
-		else{echo '[{"message":False}]';}
+		else{echo '[{"message":"False", "erreur"="Problème lors de l\'insertion des données"}]';}
 	}
 	else
 	{
-		echo '[{"message":False}]';
+		echo '[{"message":"False", "erreur"="Problème champ manquant"}]';
 	}
 	
 

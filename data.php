@@ -62,7 +62,7 @@
 			$m = isMonth($_GET["periode"]);
 			if($_GET["periode"]=="13")//erreur
 			{
-				echo "ERROR wrong get request";
+				echo '[{"message":"False", "erreur"="Problème requete"}]';
 			}
 			else
 			{
@@ -71,7 +71,7 @@
 		}
 		else
 		{
-			echo "ERROR wrong get request";
+			echo '[{"message":"False", "erreur"="Problème requete"}]';
 		}
 	}
 	else

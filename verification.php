@@ -3,19 +3,20 @@
 	require_once('sql.php');
 	require_once('MaBD.php');
 
-	$sql = new SQL(MaBD::getInstance());
-	$existe = $sql->identification($_POST['login'],$_POST['mdp']);
+	if(isset($_POST["login"]) and isset($_POST["mdp"]))
+		$sql = new SQL(MaBD::getInstance());
+		$existe = $sql->identification($_POST['login'],$_POST['mdp']);
 
-	if($existe!=NULL)
-	{
-		
-
-		echo '[{"message":True,"nom": '.$existe['nom'].', "prenom":'.$existe['prenom'].'}]';
-		
+		if($existe!=NULL)
+		{
+			echo '[{"message":"True","value":'.$existe.'}]';
+			
+		}
+		else
+		{
+			echo '[{"message":"False", "erreur"="Probleme vous n\'appartenez pas à la base"}]';
+		}
 	}
-	else
-	{
-		echo '[{"message":False}]';
-	}
+	else{echo '[{"message":"False", "erreur"="Problème champ manquant"}]';}
 
 ?>

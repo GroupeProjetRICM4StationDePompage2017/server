@@ -15,25 +15,47 @@ class SQL{
 	return FALSE : utilisateur non dans la base ou mat de passe faux */
 	public function identification($log,$mdp)//ok
 	{
+		$isjardinier = $this->identificationJardinier($log,$mdp);
+		if($isjardinier==NULL)
+		{
+			$isadherent = $this->identificationAdherents($log,$mdp);
+			if($isadherent==NULL)
+			{return NULL;}
+			return $isadherent;
+		}
+		return $isjardinier;
+	}
+
+	public function identificationJardinier($log,$mdp)
+	{
 		$mdpC = md5($mdp);
 		$reponse = $this->bdd->query('SELECT * FROM jardinier WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
-		$donnees;
-		//L'utilisateur n'est pas dans la base de donné jardinier ou son motde passe est faux
-		if(!($donnees = $reponse->fetch()))
+		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
+		$reponse->closeCursor();
+		if(!($donnees))
 		{
-			$reponse->closeCursor();
-
-			$reponse = $this->bdd->query('SELECT * FROM adherents WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
-
-			//L'utilisateur n'est pas dans la base de donné adherents ou son motde passe est faux
-			if(!($donnees = $reponse->fetch()))
-			{return NULL;}
-			
-			return $donnees;
-			$reponse->closeCursor();
+			return NULL;
 		}
-		return $donnees;
+		$donnees["isGardener"] = "True";
+		return json_encode($donnees);
 	}
+
+	public function identificationAdherents($log,$mdp)
+	{
+		$mdpC = md5($mdp);
+		$reponse = $this->bdd->query('SELECT * FROM adherents WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
+		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
+		$reponse->closeCursor();
+
+		//L'utilisateur n'est pas dans la base de donné jardinier ou son motde passe est faux
+		if(!($donnees))
+		{
+			return NULL;
+		}
+		$donnees["isGardener"] = "False";
+		return json_encode($donnees);
+	}
+
 
 	//===============================================================//
 	//==========================REQUETE==============================//
@@ -87,7 +109,7 @@ class SQL{
 	{
 		$res = false;
 		//Vérification que l'utilisateur n'existe pas
-		if($this->identification($log,$mdp)!=null)
+		if($this->identification($log,$mdp)!=NULL)
 		{return $res;}
 
 		$mdpC = md5($mdp);
@@ -116,9 +138,26 @@ class SQL{
 
 			$req = $this->bdd->prepare('INSERT INTO cuvemeasure VALUES (:id,:date,:time,:level,:state,:levelb)');
 			$res = $req->execute($arrayData);
-			
+		}
+		return $res;
+	}
+
+	/*Ajoute une données dans la table cuvemeasure*/
+	function addOrder($id,$login,$mdp,$levelrequire)
+	{
+		$res = false;
+
+		if($this->identificationJardinier($login,$mdp)==NULL)
+		{	return $res;}
+
+		if($levelrequire<9 and $levelrequire>=0)//le level est entre 0 et 8 et le level de la batere est entre 0 et 10
+		{
+			$arrayData= array('id'=>$id,'date'=>date("Y-m-d"),'time'=>date("H:i:s"),'levelr'=>$levelrequire);
+			$req = $this->bdd->prepare('INSERT INTO ordres VALUES (:id,:date,:time,:levelr,0)');
+			$res = $req->execute($arrayData);	
 		}
 		return $res;
 	}
 }
 ?>
+
