@@ -48,8 +48,10 @@ public class SQL {
 		try 
 		{
 			Statement statement = (Statement) connexion.createStatement();
+			
+			String requete = "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE level_require = (SELECT MAX(level_require) FROM ordres WHERE is_executed=0))";
 			//ResultSet resultat = statement.executeQuery( "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE is_executed=0);" );
-			ResultSet resultat = statement.executeQuery( "SELECT * FROM ordres WHERE level_require = (SELECT MAX(level_require) FROM ordres WHERE is_executed=0);");
+			ResultSet resultat = statement.executeQuery( requete);
 			while(resultat.next())
 			{
 				System.out.println(resultat.getString( "idDevice" )+"-"+resultat.getString( "date" )+"-"+resultat.getString( "time" )+"-"+resultat.getString( "level_require" )+"-"+resultat.getString( "is_executed" ));
@@ -82,10 +84,10 @@ public class SQL {
 	
 	public static void main(String args[]) {
         SQL coSQL = new SQL();
-        //coSQL.getOrder();
+        coSQL.getOrder();
         
-        Random rand = new Random();
-        coSQL.setData(1,rand.nextInt(9),rand.nextInt(2),rand.nextInt(11));
+        //Random rand = new Random();
+        //coSQL.setData(1,rand.nextInt(9),rand.nextInt(2),rand.nextInt(11));
         coSQL.fermutureConnexion();
     }
 
