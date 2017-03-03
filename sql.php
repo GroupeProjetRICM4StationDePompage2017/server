@@ -153,7 +153,7 @@ class SQL{
 		if($levelrequire<9 and $levelrequire>=0)//le level est entre 0 et 8 et le level de la batere est entre 0 et 10
 		{
 			$arrayData= array('id'=>$id,'date'=>date("Y-m-d"),'time'=>date("H:i:s"),'levelr'=>$levelrequire);
-			$req = $this->bdd->prepare('INSERT INTO ordres VALUES (:id,:date,:time,:levelr,0)');
+			$req = $this->bdd->prepare('INSERT INTO ordres(idDevice,date,time,level_require,is_executed) VALUES (:id,:date,:time,:levelr,0)');
 			$res = $req->execute($arrayData);	
 		}
 		return $res;
