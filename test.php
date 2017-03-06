@@ -56,7 +56,7 @@
       curl_close($curl);
       echo $sh4Code;*/
 
-      $sh4 = 'login=la_scolopendre&mdp=le_cache_oeil&levelrequire=8';
+      $sh4 = 'login=la_scolopendre&mdp=le_cache_oeil&levelrequire=5';
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_URL, "http://localhost/projet/server/ordres.php"); //Page sur laquelle envoyer les POST autrement dit la page vers laquelle pointe le formulaire
       curl_setopt($curl, CURLOPT_POST, 1);

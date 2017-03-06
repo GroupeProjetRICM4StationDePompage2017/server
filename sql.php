@@ -100,6 +100,20 @@ class SQL{
 		return json_encode($tableaux);
 	}
 
+	/**/
+	public function getOrder()
+	{
+		$indice = 0;
+		$reponse = $this->bdd->query('SELECT * FROM ordres WHERE is_executed=0 ORDER BY date DESC, time DESC;');
+		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
+		$reponse->closeCursor();
+		if(!($donnees))
+		{
+			return NULL;
+		}
+		return json_encode($donnees);
+	}
+
 	//===============================================================//
 	//===========================INSERT==============================//
 	//===============================================================//
@@ -154,6 +168,22 @@ class SQL{
 		{
 			$arrayData= array('id'=>$id,'date'=>date("Y-m-d"),'time'=>date("H:i:s"),'levelr'=>$levelrequire);
 			$req = $this->bdd->prepare('INSERT INTO ordres(idDevice,date,time,level_require,is_executed) VALUES (:id,:date,:time,:levelr,0)');
+			$res = $req->execute($arrayData);	
+		}
+		return $res;
+	}
+
+	function updateOrder($id,$login,$mdp,$levelrequire)
+	{
+		$res = false;
+
+		if($this->identificationJardinier($login,$mdp)==NULL)
+		{	return $res;}
+
+		if($levelrequire<9 and $levelrequire>=0)//le level est entre 0 et 8 et le level de la batere est entre 0 et 10
+		{
+			$arrayData= array('id'=>$id,'levelr'=>$levelrequire);
+			$req = $this->bdd->prepare('UPDATE ordres SET idDevice =:id, level_require=:levelr WHERE is_executed=0 ;');
 			$res = $req->execute($arrayData);	
 		}
 		return $res;
