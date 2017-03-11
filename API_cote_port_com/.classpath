@@ -3,8 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="mysql-connector-java-5.1.41-bin.jar"/>
-	<classpathentry kind="lib" path="rxtx-2.1-7-bins-r2/RXTXcomm.jar"/>
-	<classpathentry kind="lib" path="rxtx-2.1-7-bins-r2/Windows/i368-mingw32/rxtxParallel.dll"/>
-	<classpathentry kind="lib" path="rxtx-2.1-7-bins-r2/Windows/i368-mingw32/rxtxSerial.dll"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

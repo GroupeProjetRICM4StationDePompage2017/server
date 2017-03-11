@@ -15,23 +15,38 @@ public class ThreadCommunicationLoRA extends Thread
 	private static final int TAILLE_TRAME_DATA = 3;
 	private static final int TAILLE_TRAME_ORDRE = 3;
 	
-	private static final int BEGIN_ETAT_POMPE = 7;
-	private static final int BEGIN_NOMBRE_DE_NIVEAU = 6;
-	private static final int BEGIN_NIVEAU = 1;
-	private static final int BEGIN_ETAT_BATERIE = 3;
+	private static final int OCTET_ID = 0;
+	private static final int OCTET_ETAT_POMPE = 1;
+	private static final int OCTET_NOMBRE_DE_NIVEAU = 1;
+	private static final int OCTET_NIVEAU_P1 = 1;
+	private static final int OCTET_NIVEAU_P2 = 2;
+	private static final int OCTET_ETAT_BATERIE = 2;
 	
-	private static final int OFFSET_ETAT_POMPE = 1;
-	private static final int OFFSET_NOMBRE_DE_NIVEAU = 5;
-	private static final int OFFSET_NIVEAU = 5;
-	private static final int OFFSET_ETAT_BATERIE = 4;
+	private static final int OCTET_ODRE_ID = 0;
+	private static final int OCTET_ORDRE_IDR = 1;
+	private static final int OCTET_ORDRE_NIVEAU = 2;
+	
+	private static final int MASK_ETAT_POMPE = 0x1;
+	private static final int MASK_NOMBRE_DE_NIVEAU = 0x1F;
+	private static final int MASK_NIVEAU_P1 = 0x3;
+	private static final int MASK_NIVEAU_P2 = 0x7;
+	private static final int MASK_ETAT_BATERIE = 0xF;
+	
+	private static final int MASK_ORDRE = 4;
+	
+	private static final int OFFSET_ETAT_POMPE =7;
+	private static final int OFFSET_NOMBRE_DE_NIVEAU = 2;
+	private static final int OFFSET_NIVEAU_P1 = 3;
+	private static final int OFFSET_NIVEAU_P2 = 5;
+	private static final int OFFSET_NIVEAU_ORDRE = 3;
 	
 	private SQL gestionaire_de_requetes;
 	private InputStream flux_d_entree;
 	private OutputStream flux_de_sortie;
 	private BufferedReader buffer_de_sortie;
 	
-	public ThreadCommunicationLoRA(SQL gestionaire_de_requetes,InputStream flux_d_entree, OutputStream flux_de_sortie) {
-		this.gestionaire_de_requetes = gestionaire_de_requetes;
+	public ThreadCommunicationLoRA(InputStream flux_d_entree, OutputStream flux_de_sortie) {
+		this.gestionaire_de_requetes = new SQL();
 		this.flux_d_entree = flux_d_entree;
 		this.flux_de_sortie = flux_de_sortie;
 		try 
@@ -48,6 +63,24 @@ public class ThreadCommunicationLoRA extends Thread
 	public void envoyerOrdre(Ordre o)
 	{
 		
+		byte[] valeurs_envoie = new byte[TAILLE_TRAME_ORDRE];
+		if(o == null)
+		{
+			valeurs_envoie[OCTET_ODRE_ID] = 0;
+			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
+			valeurs_envoie[OCTET_ORDRE_NIVEAU] = 0;
+		}
+		else
+		{
+			valeurs_envoie[OCTET_ODRE_ID] = new Byte(o.getIdDevice());
+			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
+			valeurs_envoie[OCTET_ORDRE_NIVEAU] = (byte) ((o.getLevel_require()<<OFFSET_NIVEAU_ORDRE)|MASK_ORDRE);
+		}
+		
+		try {
+			this.flux_de_sortie.write(valeurs_envoie);
+		} catch (IOException e) {e.printStackTrace();}
+		
 	}
 	
 	public void lireDonnee()
@@ -59,44 +92,23 @@ public class ThreadCommunicationLoRA extends Thread
 			this.flux_d_entree.read(valeurs_lues);
 		} catch (IOException e) {e.printStackTrace();}
 		
-		int id = valeurs_lues[0];
+		int id = valeurs_lues[OCTET_ID];
+		int state = (valeurs_lues[OCTET_ETAT_POMPE]>>OFFSET_ETAT_POMPE) & MASK_ETAT_POMPE;
+		int levelMax = (valeurs_lues[OCTET_NOMBRE_DE_NIVEAU]>>OFFSET_NOMBRE_DE_NIVEAU) & MASK_NOMBRE_DE_NIVEAU;
+		int level = ((valeurs_lues[OCTET_NIVEAU_P1] & MASK_NIVEAU_P1)<<OFFSET_NIVEAU_P1)|((valeurs_lues[OCTET_NIVEAU_P2]>>OFFSET_NIVEAU_P2)& MASK_NIVEAU_P2);
+		int levelb = (valeurs_lues[OCTET_ETAT_BATERIE] & MASK_ETAT_BATERIE);
 		
-		int levelMax = (valeurs_lues[1]>>2) & 0x1F;
-		
-		int state = (valeurs_lues[1]>>7) & 0x1F;
-		
-		int level = ((valeurs_lues[1] & 0x3)<<3)|((valeurs_lues[2]>>5)& 0x7);
-		
-		int levelb = (valeurs_lues[2] & 0xB);
-		//public void setData(int id,int level,int state,int levelb)
-		
-		
-		
+		this.gestionaire_de_requetes.setData(id, level, state, levelb);
 	}
 	
-	public static void printOrdre()
-	{
-		byte[] valeurs_lues = new byte[TAILLE_TRAME_DATA];
-		
-		valeurs_lues[0]=1;
-		valeurs_lues[1]= new Byte("A");
-		valeurs_lues[2]= 10;
-		
-		int id = valeurs_lues[0];
-		
-		int levelMax = (valeurs_lues[1]>>2) & 0x1F;
-		
-		int state = (valeurs_lues[1]>>7) & 0x1F;
-		
-		int level = ((valeurs_lues[1] & 0x3)<<3)|((valeurs_lues[2]>>5)& 0x7);
-		
-		int levelb = (valeurs_lues[2] & 0xB);
-		
-		System.out.println(id+"-"+state+"-"+levelMax+"-"+level+"-"+levelb);
-	}
-
 	public void run()
 	{
+		while(true)
+		{
+			this.lireDonnee();
+			Ordre o = this.gestionaire_de_requetes.getOrder();
+			this.envoyerOrdre(o);
+		}
 		
 	}
 }

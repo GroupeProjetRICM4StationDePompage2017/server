@@ -43,14 +43,19 @@ public class SQL {
 		try 
 		{
 			Statement statement = (Statement) connexion.createStatement();
-			String requete = "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE is_executed=0);";
+			
+			String requete = "SELECT * FROM ordres WHERE is_executed=0";
+			//String requete = "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE is_executed=0)";
 			//"SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE level_require = (SELECT MAX(level_require) FROM ordres WHERE is_executed=0))";
 			
-			ResultSet resultat = statement.executeQuery( requete);
-			System.out.println(resultat.getString( "idDevice" )+"-"+resultat.getString( "date" )+"-"+resultat.getString( "time" )+"-"+resultat.getString( "level_require" )+"-"+resultat.getString( "is_executed" ));
+			ResultSet resultat = statement.executeQuery("SELECT * FROM ordres WHERE is_executed=0;");
+			resultat.next();
+			
+			if(resultat==null){return null;}
+			Ordre o = new Ordre(resultat.getString( "idDevice" ), resultat.getString( "date" ), resultat.getString( "time" ), resultat.getString( "level_require" ));
 			statement.close();
 			
-			return (new Ordre(resultat.getString( "idDevice" ), resultat.getString( "date" ), resultat.getString( "time" ), resultat.getString( "level_require" )));
+			return o;
 				
 		} catch (SQLException e) {e.printStackTrace();}
 		

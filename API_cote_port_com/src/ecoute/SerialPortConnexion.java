@@ -3,12 +3,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import gnu.io.CommPortIdentifier;
+/*import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
-
+*/
 /**
  * La classe qui suit permet d'ouvrir une connexion sur un port série. 
  * Paramètre par defaut: 9600 baudes, sans contrôle de flux
@@ -18,18 +18,18 @@ import gnu.io.UnsupportedCommOperationException;
  * */
 public class SerialPortConnexion 
 {
-	private SerialPort port;
-	private CommPortIdentifier portID;
+	//private SerialPort port;
+	//private CommPortIdentifier portID;
 	
 	/**Constructeur
 	 * @throws NoSuchPortException */
-	public SerialPortConnexion(String nom) throws NoSuchPortException
+	public SerialPortConnexion(String nom) //throws NoSuchPortException
 	{
-		if (verificationExistancePort(nom)!=null)
+		/*if (verificationExistancePort(nom)!=null)
 		{
 			this.portID=verificationExistancePort(nom);
 			this.port=null;
-		}
+		}*/
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class SerialPortConnexion
 	 * */
 	public Boolean ouvrirPort()
 	{
-		if(this.portID==null){return false;}
+		/*if(this.portID==null){return false;}
 		try 
 		{
 			 this.port = (SerialPort) portID.open("SerialSender", 2000);
@@ -55,7 +55,7 @@ public class SerialPortConnexion
 		{
 			Thread.sleep(1000);
 		}
-		catch (InterruptedException e) {}
+		catch (InterruptedException e) {}*/
 		return true;
 	}
 
@@ -66,7 +66,7 @@ public class SerialPortConnexion
 	 * */
 	private void parametrageConnection() 
 	{
-		try
+		/*try
 		{
 			 this.port.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 			 this.port.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
@@ -77,7 +77,7 @@ public class SerialPortConnexion
 		{
 			System.out.println("Mauvaise configuration");
 			return;
-		}
+		}*/
 		
 	}
 	
@@ -88,8 +88,8 @@ public class SerialPortConnexion
 	 * */
 	public void fermerPort()
 	{
-		this.port.close();
-		System.out.println("Le port a été fermé");
+		/*this.port.close();
+		System.out.println("Le port a été fermé");*/
 	}
 	
 	/**
@@ -98,12 +98,12 @@ public class SerialPortConnexion
 	 * Verifie si la connexion sur le port est possible et si oui, la methode renvoie identifiant du port
 	 * @throws NoSuchPortException 
 	 * */
-	private CommPortIdentifier verificationExistancePort(String nomPort) throws NoSuchPortException
+	private void verificationExistancePort(String nomPort)// throws NoSuchPortException
 	{
-		 CommPortIdentifier p = null;
+		 /*CommPortIdentifier p = null;
 		 
 		 p = CommPortIdentifier.getPortIdentifier(nomPort);
-		 return p;
+		 return p;*/
 		 
 	}
 	
@@ -114,7 +114,7 @@ public class SerialPortConnexion
 	 * */
 	public InputStream obtenirConnexionEntree()
 	{
-		try
+		/*try
 		{
 			return this.port.getInputStream();
 		}
@@ -123,7 +123,8 @@ public class SerialPortConnexion
 			e4.printStackTrace();
 			return null;
 		}
-		
+		*/
+		return null;
 	}
 	
 	/**
@@ -133,7 +134,7 @@ public class SerialPortConnexion
 	 * */
 	public OutputStream obtenirConnexionSortie()
 	{
-		try
+		/*try
 		{
 			return this.port.getOutputStream();
 		}
@@ -141,7 +142,8 @@ public class SerialPortConnexion
 		{
 			e4.printStackTrace();
 			return null;
-		}
+		}*/
+		return null;
 	}
 		
 }
