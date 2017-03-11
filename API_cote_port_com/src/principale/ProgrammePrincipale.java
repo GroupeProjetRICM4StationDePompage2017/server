@@ -1,6 +1,6 @@
-package main;
+package principale;
 
-import Ecoute.ThreadCommunicationLoRA;
+import ecoute.ThreadCommunicationLoRA;
 
 
 public class ProgrammePrincipale {

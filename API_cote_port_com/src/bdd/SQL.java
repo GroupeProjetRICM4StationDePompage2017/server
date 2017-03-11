@@ -1,4 +1,4 @@
-package Base_de_données;
+package bdd;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;

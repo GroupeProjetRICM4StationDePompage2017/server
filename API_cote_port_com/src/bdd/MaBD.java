@@ -1,4 +1,4 @@
-package Base_de_données;
+package bdd;
 
 public class MaBD {
 	

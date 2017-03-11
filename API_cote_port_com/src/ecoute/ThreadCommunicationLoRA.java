@@ -1,4 +1,4 @@
-package Ecoute;
+package ecoute;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import bdd.SQL;
 import ordre.Ordre;
-import Base_de_données.SQL;
 
 public class ThreadCommunicationLoRA extends Thread 
 {
