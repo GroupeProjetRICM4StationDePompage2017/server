@@ -7,106 +7,73 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
 import bdd.SQL;
 import ordre.Ordre;
 
-public class ThreadCommunicationLoRA extends Thread 
+public class ThreadCommunicationLoRA extends Thread implements SerialPortEventListener
 {
-	private static final int TAILLE_TRAME_DATA = 3;
-	private static final int TAILLE_TRAME_ORDRE = 3;
-	
-	private static final int OCTET_ID = 0;
-	private static final int OCTET_ETAT_POMPE = 1;
-	private static final int OCTET_NOMBRE_DE_NIVEAU = 1;
-	private static final int OCTET_NIVEAU_P1 = 1;
-	private static final int OCTET_NIVEAU_P2 = 2;
-	private static final int OCTET_ETAT_BATERIE = 2;
-	
-	private static final int OCTET_ODRE_ID = 0;
-	private static final int OCTET_ORDRE_IDR = 1;
-	private static final int OCTET_ORDRE_NIVEAU = 2;
-	
-	private static final int MASK_ETAT_POMPE = 0x1;
-	private static final int MASK_NOMBRE_DE_NIVEAU = 0x1F;
-	private static final int MASK_NIVEAU_P1 = 0x3;
-	private static final int MASK_NIVEAU_P2 = 0x7;
-	private static final int MASK_ETAT_BATERIE = 0xF;
-	
-	private static final int MASK_ORDRE = 4;
-	
-	private static final int OFFSET_ETAT_POMPE =7;
-	private static final int OFFSET_NOMBRE_DE_NIVEAU = 2;
-	private static final int OFFSET_NIVEAU_P1 = 3;
-	private static final int OFFSET_NIVEAU_P2 = 5;
-	private static final int OFFSET_NIVEAU_ORDRE = 3;
 	
 	private SQL gestionaire_de_requetes;
-	private InputStream flux_d_entree;
-	private OutputStream flux_de_sortie;
-	private BufferedReader buffer_de_sortie;
+	private SerialPortConnexion port;
 	
-	public ThreadCommunicationLoRA(InputStream flux_d_entree, OutputStream flux_de_sortie) {
+	public ThreadCommunicationLoRA(String  nom) {
 		this.gestionaire_de_requetes = new SQL();
-		this.flux_d_entree = flux_d_entree;
-		this.flux_de_sortie = flux_de_sortie;
-		try 
-		{
-			this.buffer_de_sortie = new BufferedReader(new InputStreamReader(this.flux_d_entree, "US-ASCII"));
-		} 
-		catch (UnsupportedEncodingException e) 
-		{
-			System.out.println("Probleme ouverture du flux de lecture");
-			e.printStackTrace();
-		}	
+		this.port = new SerialPortConnexion(nom);
 	}
 
 	public void envoyerOrdre(Ordre o)
 	{
-		
-		byte[] valeurs_envoie = new byte[TAILLE_TRAME_ORDRE];
-		if(o == null)
-		{
-			valeurs_envoie[OCTET_ODRE_ID] = 0;
-			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
-			valeurs_envoie[OCTET_ORDRE_NIVEAU] = 0;
-		}
-		else
-		{
-			valeurs_envoie[OCTET_ODRE_ID] = new Byte(o.getIdDevice());
-			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
-			valeurs_envoie[OCTET_ORDRE_NIVEAU] = (byte) ((o.getLevel_require()<<OFFSET_NIVEAU_ORDRE)|MASK_ORDRE);
-		}
-		
-		try {
-			this.flux_de_sortie.write(valeurs_envoie);
-		} catch (IOException e) {e.printStackTrace();}
-		
+		byte[] valeurs_envoie = translator.ordreToBytes(o);		
+		this.port.write(valeurs_envoie);		
+		System.out.println("j'ai écrit");
+		//this.gestionaire_de_requetes.updateOrdre();
 	}
 	
 	public void lireDonnee()
 	{
-		byte[] valeurs_lues = new byte[TAILLE_TRAME_DATA];
+		//byte[] valeurs_lues = new byte[translator.TAILLE_TRAME_DATA];
 		
-		try 
-		{
-			this.flux_d_entree.read(valeurs_lues);
-		} catch (IOException e) {e.printStackTrace();}
-		
-		int id = valeurs_lues[OCTET_ID];
-		int state = (valeurs_lues[OCTET_ETAT_POMPE]>>OFFSET_ETAT_POMPE) & MASK_ETAT_POMPE;
-		int levelMax = (valeurs_lues[OCTET_NOMBRE_DE_NIVEAU]>>OFFSET_NOMBRE_DE_NIVEAU) & MASK_NOMBRE_DE_NIVEAU;
-		int level = ((valeurs_lues[OCTET_NIVEAU_P1] & MASK_NIVEAU_P1)<<OFFSET_NIVEAU_P1)|((valeurs_lues[OCTET_NIVEAU_P2]>>OFFSET_NIVEAU_P2)& MASK_NIVEAU_P2);
-		int levelb = (valeurs_lues[OCTET_ETAT_BATERIE] & MASK_ETAT_BATERIE);
-		
-		this.gestionaire_de_requetes.setData(id, level, state, levelb);
+		System.out.println("je lit");
+		byte[] valeurs_lues = valeurs_lues = this.port.read();
+		Data d = translator.bytesToData(valeurs_lues);
+		System.out.println(d.toString());
+		this.gestionaire_de_requetes.setData(d.getIdDevice(), d.getLevel(), d.getState(), d.getLevelpower());
+		System.out.println("requete");
 	}
 	
 	public void run()
 	{
+		this.gestionaire_de_requetes.connexion();
+		this.port.ouvrirPort();
+		this.port.listener(this);
+		System.out.println("SQL + port ouvert");
 		while(true)
 		{
+			
+		}
+		
+	}
+	
+	public void stopThread()
+	{
+		this.port.fermerPort();
+		this.gestionaire_de_requetes.fermutureConnexion();
+	}
+
+	@Override
+	public void serialEvent(SerialPortEvent arg0) {
+		System.out.println("Evenement entendu");
+		if(arg0.getEventType()==SerialPortEvent.RXCHAR)
+		{
+			System.out.println("Entendu lecture");
 			this.lireDonnee();
+			System.out.println("Data lu");
 			Ordre o = this.gestionaire_de_requetes.getOrder();
+			System.out.println("ordre");
+			try {
+				sleep(5000);} catch (InterruptedException e) {	e.printStackTrace();	}
 			this.envoyerOrdre(o);
 		}
 		

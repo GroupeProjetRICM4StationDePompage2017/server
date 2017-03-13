@@ -3,6 +3,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import jssc.SerialPort;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
+
 /*import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -16,20 +20,18 @@ import gnu.io.UnsupportedCommOperationException;
  * Attributs:SerialPort port, CommPortIdentifier portID
  * 
  * */
-public class SerialPortConnexion 
+public class SerialPortConnexion
 {
-	//private SerialPort port;
-	//private CommPortIdentifier portID;
+	private SerialPort port;
+	private String portID;
 	
 	/**Constructeur
 	 * @throws NoSuchPortException */
 	public SerialPortConnexion(String nom) //throws NoSuchPortException
 	{
-		/*if (verificationExistancePort(nom)!=null)
-		{
-			this.portID=verificationExistancePort(nom);
-			this.port=null;
-		}*/
+		this.portID=nom;
+		this.port=null;
+		
 	}
 	
 	/**
@@ -39,46 +41,18 @@ public class SerialPortConnexion
 	 * */
 	public Boolean ouvrirPort()
 	{
-		/*if(this.portID==null){return false;}
-		try 
-		{
-			 this.port = (SerialPort) portID.open("SerialSender", 2000);
+		 boolean isOpen = false;	 
+		 try 
+		 {
+			 this.port = new SerialPort(this.portID);
+			 isOpen = this.port.openPort();
+			 this.port.setParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 			 System.out.println("Le port a été ouvert");
+		} catch (SerialPortException e1) {
+			e1.printStackTrace();
+			return isOpen;
 		}
-		catch (PortInUseException e2) 
-		{
-			System.out.println("Le port est déja utilisé");
-			return false;
-		}
-		this.parametrageConnection();
-		try 
-		{
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {}*/
-		return true;
-	}
-
-	/**
-	 * Entrees:void
-	 * Sorties:void
-	 * Parametre la connexion et le controle de flux de celle-ci
-	 * */
-	private void parametrageConnection() 
-	{
-		/*try
-		{
-			 this.port.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-			 this.port.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-			 this.port.enableReceiveTimeout(5000);
-			 //this.port.setInputBufferSize(120000);
-		}
-		catch (UnsupportedCommOperationException e3) 
-		{
-			System.out.println("Mauvaise configuration");
-			return;
-		}*/
-		
+		return isOpen;		
 	}
 	
 	/**
@@ -88,62 +62,48 @@ public class SerialPortConnexion
 	 * */
 	public void fermerPort()
 	{
-		/*this.port.close();
-		System.out.println("Le port a été fermé");*/
+		try {
+			this.port.closePort();
+			System.out.println("Le port a été fermé");
+		} catch (SerialPortException e) {e.printStackTrace();}
+		
 	}
 	
 	/**
-	 * Entrees:String, le nom du port série
-	 * Sorties:CommPortIdentifier, identifiant du port
-	 * Verifie si la connexion sur le port est possible et si oui, la methode renvoie identifiant du port
-	 * @throws NoSuchPortException 
+	 * Entrees:byte[]
+	 * Sorties:void
+	 * Ecrit des données
 	 * */
-	private void verificationExistancePort(String nomPort)// throws NoSuchPortException
+	public void write(byte[] message)	
 	{
-		 /*CommPortIdentifier p = null;
-		 
-		 p = CommPortIdentifier.getPortIdentifier(nomPort);
-		 return p;*/
-		 
-	}
-	
-	/**
-	 * Entrees:void
-	 * Sorties:InputStream
-	 * Revoie la connexion d'entree
-	 * */
-	public InputStream obtenirConnexionEntree()
-	{
-		/*try
+		try 
 		{
-			return this.port.getInputStream();
-		}
-		catch(IOException e4) 
-		{
-			e4.printStackTrace();
-			return null;
-		}
-		*/
-		return null;
+			this.port.writeBytes(message);
+		} catch (SerialPortException e) {e.printStackTrace();}
 	}
 	
 	/**
 	 * Entrees:void
-	 * Sorties:OutputStream
-	 * Renvoie la connexion de sortie
+	 * Sorties:byte[]
+	 * Lit des données
 	 * */
-	public OutputStream obtenirConnexionSortie()
+	public byte[] read()
 	{
-		/*try
-		{
-			return this.port.getOutputStream();
+		byte[] ordre = null;
+		try {
+			ordre = this.port.readBytes();
+		} catch (SerialPortException e) {e.printStackTrace();}
+		return ordre;
+	}
+	
+	public void listener(SerialPortEventListener se)
+	{
+		try {
+			this.port.addEventListener(se);
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		catch(IOException e4) 
-		{
-			e4.printStackTrace();
-			return null;
-		}*/
-		return null;
 	}
 		
 }
