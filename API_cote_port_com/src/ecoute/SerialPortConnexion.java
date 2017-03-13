@@ -78,6 +78,7 @@ public class SerialPortConnexion
 	{
 		try 
 		{
+			System.out.println(message[0]+"-"+message[1]+"-"+message[2]);
 			this.port.writeBytes(message);
 		} catch (SerialPortException e) {e.printStackTrace();}
 	}
