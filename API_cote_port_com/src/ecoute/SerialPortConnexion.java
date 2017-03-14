@@ -30,8 +30,7 @@ public class SerialPortConnexion
 	public SerialPortConnexion(String nom) //throws NoSuchPortException
 	{
 		this.portID=nom;
-		this.port=null;
-		
+		this.port=null;	
 	}
 	
 	/**
@@ -45,7 +44,7 @@ public class SerialPortConnexion
 		 try 
 		 {
 			 this.port = new SerialPort(this.portID);
-			 isOpen = this.port.openPort();
+			 isOpen = this.port.openPort();	
 			 this.port.setParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 			 System.out.println("Le port a été ouvert");
 		} catch (SerialPortException e1) {
@@ -80,6 +79,22 @@ public class SerialPortConnexion
 		{
 			System.out.println(message[0]+"-"+message[1]+"-"+message[2]);
 			this.port.writeBytes(message);
+			this.port.writeByte((byte) 0x0A);
+		} catch (SerialPortException e) {e.printStackTrace();}
+	}
+	
+	public void write2(byte[] message)	
+	{
+		try 
+		{
+			System.out.println("ENVOIE : ");
+			for(int i = 0; i < message.length;i++)
+			{
+				System.out.print(message[i]+"-");
+				this.port.writeByte(message[i]);
+			}
+			this.port.writeByte((byte) 0x0A);
+			System.out.print("\n");
 		} catch (SerialPortException e) {e.printStackTrace();}
 	}
 	
@@ -91,20 +106,13 @@ public class SerialPortConnexion
 	public byte[] read()
 	{
 		byte[] ordre = null;
-		try {
-			ordre = this.port.readBytes();
-		} catch (SerialPortException e) {e.printStackTrace();}
+		try {ordre = this.port.readBytes(translator.TAILLE_TRAME_DATA+1);} catch (SerialPortException e) {e.printStackTrace();}
 		return ordre;
 	}
 	
 	public void listener(SerialPortEventListener se)
 	{
-		try {
-			this.port.addEventListener(se);
-		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		try {this.port.addEventListener(se);} catch (SerialPortException e) {e.printStackTrace();}
 	}
 		
 }

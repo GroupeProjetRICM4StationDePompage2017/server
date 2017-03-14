@@ -17,62 +17,69 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 	
 	private SQL gestionaire_de_requetes;
 	private SerialPortConnexion port;
+	private boolean running;
 	
 	public ThreadCommunicationLoRA(String  nom) {
 		this.gestionaire_de_requetes = new SQL();
 		this.port = new SerialPortConnexion(nom);
+		this.running=false;
 	}
 
 	public void envoyerOrdre(Ordre o)
 	{
 		byte[] valeurs_envoie = translator.ordreToBytes(o);		
-		this.port.write(valeurs_envoie);		
+		this.port.write2(valeurs_envoie);		
 		System.out.println("Ordre :"+o.toString());
-		//this.gestionaire_de_requetes.updateOrdre();
+		this.gestionaire_de_requetes.updateOrdre();
 	}
 	
-	public void lireDonnee()
+	public boolean lireDonnee()
 	{
-		//byte[] valeurs_lues = new byte[translator.TAILLE_TRAME_DATA];
-		
-		System.out.println("je lit");
 		byte[] valeurs_lues = valeurs_lues = this.port.read();
 		Data d = translator.bytesToData(valeurs_lues);
+		//if(d==null){return false;}
 		System.out.println("DATA : "+d.toString());
 		this.gestionaire_de_requetes.setData(d.getIdDevice(), d.getLevel(), d.getState(), d.getLevelpower());
+		return true;
 	}
+	
 	
 	public void run()
 	{
+		this.running=true;
 		this.gestionaire_de_requetes.connexion();
 		this.port.ouvrirPort();
 		this.port.listener(this);
-		System.out.println("SQL + port ouvert");
-		while(true)
+		while(this.running)
 		{
-			
+			try {sleep(1);} catch (InterruptedException e) 
+			{
+				this.stopThread();
+			}
 		}
-		
 	}
 	
 	public void stopThread()
 	{
+		this.running=false;
 		this.port.fermerPort();
 		this.gestionaire_de_requetes.fermutureConnexion();
 	}
 
 	@Override
 	public void serialEvent(SerialPortEvent arg0) {
-		System.out.println("Event");
 		if(arg0.getEventType()==SerialPortEvent.RXCHAR)
 		{
 			System.out.println("Debut action");
-			this.lireDonnee();
-			Ordre o = this.gestionaire_de_requetes.getOrder();
-			System.out.println("Send ordre");
-			try {
-				sleep(10000);} catch (InterruptedException e) {	e.printStackTrace();	}
-			this.envoyerOrdre(o);
+			boolean read = this.lireDonnee();
+			if(read)
+			{
+				Ordre o = this.gestionaire_de_requetes.getOrder();
+				System.out.println("Envoie de l'ordre : ");
+				try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
+				this.envoyerOrdre(o);
+				//this.lireDonnee2();
+			}
 			System.out.println("fin action");
 		}
 		

@@ -43,8 +43,9 @@ public class translator {
 		}
 		else
 		{
+			//TODO
 			valeurs_envoie[OCTET_ODRE_ID] = (byte) new Byte(o.getIdDevice());
-			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
+			valeurs_envoie[OCTET_ORDRE_IDR] = (byte) 0x55;
 			valeurs_envoie[OCTET_ORDRE_NIVEAU] = (byte) ((o.getLevel_require()<<OFFSET_NIVEAU_ORDRE)|MASK_ORDRE);
 		}
 		return valeurs_envoie;
@@ -52,7 +53,10 @@ public class translator {
 	
 	public static Data bytesToData(byte[] b)
 	{
-			
+		//if(b==null){return null;}
+		System.out.println("Taille data : "+b.length);
+		
+		//if(b.length<3){return null;}
 		int id = (byte) b[OCTET_ID];
 		int state = (byte) (b[OCTET_ETAT_POMPE]>>OFFSET_ETAT_POMPE) & MASK_ETAT_POMPE;
 		int levelMax = (byte) (b[OCTET_NOMBRE_DE_NIVEAU]>>OFFSET_NOMBRE_DE_NIVEAU) & MASK_NOMBRE_DE_NIVEAU;

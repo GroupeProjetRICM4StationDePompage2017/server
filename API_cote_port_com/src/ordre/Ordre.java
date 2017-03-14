@@ -30,15 +30,4 @@ public class Ordre {
 		return this.idDevice+"-"+this.date+"-"+this.time+"-"+this.level_require;
 	}
 
-	public byte[] toByte() {
-		
-		
-		
-		return null;
-	}
-	
-	
-	
-	
-
 }
