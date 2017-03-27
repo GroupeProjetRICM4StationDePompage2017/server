@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Time;
+import java.util.Date;
 
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -30,12 +32,13 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 		byte[] valeurs_envoie = translator.ordreToBytes(o);		
 		this.port.write2(valeurs_envoie);		
 		System.out.println("ORDRE :"+o.toString());
-		//this.gestionaire_de_requetes.updateOrdre();
+		this.gestionaire_de_requetes.updateOrdre();
 	}
 	
 	public boolean lireDonnee()
 	{
 		byte[] valeurs_lues = this.port.read();
+		if(valeurs_lues==null) return false;
 		Data d = translator.bytesToData(valeurs_lues);
 		//if(d==null){return false;}
 		System.out.println("===>Lire");
@@ -76,6 +79,7 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 			if(read)
 			{
 				Ordre o = this.gestionaire_de_requetes.getOrder();
+				//Ordre o = new Ordre("36", new Date().toString(), new Time(15, 37, 50).toString(), "5");
 				System.out.println("===>Envoie de l'ordre : ");
 				try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
 				this.envoyerOrdre(o);
