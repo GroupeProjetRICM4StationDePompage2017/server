@@ -77,7 +77,6 @@ public class SerialPortConnexion
 	{
 		try 
 		{
-			System.out.println(message[0]+"-"+message[1]+"-"+message[2]);
 			this.port.writeBytes(message);
 			this.port.writeByte((byte) 0x0A);
 		} catch (SerialPortException e) {e.printStackTrace();}
@@ -87,14 +86,11 @@ public class SerialPortConnexion
 	{
 		try 
 		{
-			System.out.println("ENVOIE : ");
 			for(int i = 0; i < message.length;i++)
 			{
-				System.out.print(message[i]+"-");
 				this.port.writeByte(message[i]);
 			}
 			this.port.writeByte((byte) 0x0A);
-			System.out.print("\n");
 		} catch (SerialPortException e) {e.printStackTrace();}
 	}
 	
@@ -106,7 +102,7 @@ public class SerialPortConnexion
 	public byte[] read()
 	{
 		byte[] ordre = null;
-		try {ordre = this.port.readBytes(translator.TAILLE_TRAME_DATA+1);} catch (SerialPortException e) {e.printStackTrace();}
+		try {ordre = this.port.readBytes(translator.TAILLE_TRAME_DATA);} catch (SerialPortException e) {e.printStackTrace();}
 		return ordre;
 	}
 	

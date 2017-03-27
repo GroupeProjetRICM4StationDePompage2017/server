@@ -29,15 +29,16 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 	{
 		byte[] valeurs_envoie = translator.ordreToBytes(o);		
 		this.port.write2(valeurs_envoie);		
-		System.out.println("Ordre :"+o.toString());
-		this.gestionaire_de_requetes.updateOrdre();
+		System.out.println("ORDRE :"+o.toString());
+		//this.gestionaire_de_requetes.updateOrdre();
 	}
 	
 	public boolean lireDonnee()
 	{
-		byte[] valeurs_lues = valeurs_lues = this.port.read();
+		byte[] valeurs_lues = this.port.read();
 		Data d = translator.bytesToData(valeurs_lues);
 		//if(d==null){return false;}
+		System.out.println("===>Lire");
 		System.out.println("DATA : "+d.toString());
 		this.gestionaire_de_requetes.setData(d.getIdDevice(), d.getLevel(), d.getState(), d.getLevelpower());
 		return true;
@@ -70,12 +71,12 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 	public void serialEvent(SerialPortEvent arg0) {
 		if(arg0.getEventType()==SerialPortEvent.RXCHAR)
 		{
-			System.out.println("Debut action");
+			System.out.println(">Debut action");
 			boolean read = this.lireDonnee();
 			if(read)
 			{
 				Ordre o = this.gestionaire_de_requetes.getOrder();
-				System.out.println("Envoie de l'ordre : ");
+				System.out.println("===>Envoie de l'ordre : ");
 				try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
 				this.envoyerOrdre(o);
 				//this.lireDonnee2();

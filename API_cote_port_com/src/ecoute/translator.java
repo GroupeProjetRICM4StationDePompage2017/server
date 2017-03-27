@@ -54,7 +54,7 @@ public class translator {
 	public static Data bytesToData(byte[] b)
 	{
 		//if(b==null){return null;}
-		System.out.println("Taille data : "+b.length);
+		//System.out.println("Taille data : "+b.length);
 		
 		//if(b.length<3){return null;}
 		int id = (byte) b[OCTET_ID];

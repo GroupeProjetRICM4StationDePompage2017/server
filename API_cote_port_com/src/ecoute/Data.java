@@ -12,8 +12,17 @@ public class Data
 	public Data(int id, int state, int levelMax, int level, int levelb) {
 		this.idDevice = id;
 		this.state = state;
-		this.level = level;
+		
 		this.levelMax = levelMax;
+		
+		if(level>=this.levelMax){this.level = level;}
+		else{this.level = level;}
+		
+		this.level = level;
+		
+		if(levelb>=10){this.levelpower = 10;}
+		else if(levelb<=0){this.levelpower = 0;}
+		else{this.levelpower = levelb;}
 		this.levelpower = levelb;
 	}
 
