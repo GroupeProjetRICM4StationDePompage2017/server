@@ -10,20 +10,17 @@ import ecoute.ThreadCommunicationLoRA;
 public class ProgrammePrincipale {
 
 	public static void main(String[] args) {
-        //SQL coSQL = new SQL();
-        //coSQL.connexion();
-        //Ordre o = coSQL.getOrder();
-        //Random rand = new Random();
-        //coSQL.setData(1,rand.nextInt(9),rand.nextInt(2),rand.nextInt(11));
-        //coSQL.fermutureConnexion();
-		//System.out.println("blopblop");
-		
-		
+
 		try {
-			ThreadCommunicationLoRA lora = new ThreadCommunicationLoRA("COM4");
-			lora.start();
-			lora.join();
-			lora.stopThread();
+			
+			if(args.length>=1)
+			{
+				ThreadCommunicationLoRA lora = new ThreadCommunicationLoRA(args[0]);
+				lora.start();
+				lora.join();
+				lora.stopThread();
+			}
+			else{System.out.println("Vous n'avez pas precise le port");}
 		} catch (InterruptedException e) {e.printStackTrace();}
 		
 		

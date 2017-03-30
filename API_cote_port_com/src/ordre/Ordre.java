@@ -16,8 +16,8 @@ public class Ordre {
 		this.time = time;
 		this.level_require = new Integer(level_require);
 	}
-	//TODO
-	public String getIdDevice() {return "36";}
+	
+	public String getIdDevice() {return idDevice;}
 
 	public String getDate() {return date;}
 

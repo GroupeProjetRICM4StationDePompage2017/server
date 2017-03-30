@@ -14,8 +14,8 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 */
 /**
- * La classe qui suit permet d'ouvrir une connexion sur un port série. 
- * Paramètre par defaut: 9600 baudes, sans contrôle de flux
+ * La classe qui suit permet d'ouvrir une connexion sur un port sï¿½rie. 
+ * Paramï¿½tre par defaut: 9600 baudes, sans contrï¿½le de flux
  * 
  * Attributs:SerialPort port, CommPortIdentifier portID
  * 
@@ -36,7 +36,7 @@ public class SerialPortConnexion
 	/**
 	 * Entrees:void
 	 * Sorties:void
-	 * Ouvre le port et vérifie que le port n'est pas utilisé
+	 * Ouvre le port et vï¿½rifie que le port n'est pas utilisï¿½
 	 * */
 	public Boolean ouvrirPort()
 	{
@@ -46,7 +46,7 @@ public class SerialPortConnexion
 			 this.port = new SerialPort(this.portID);
 			 isOpen = this.port.openPort();	
 			 this.port.setParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-			 System.out.println("Le port a été ouvert");
+			 System.out.println("Le port a ete ouvert");
 		} catch (SerialPortException e1) {
 			e1.printStackTrace();
 			return isOpen;
@@ -63,7 +63,7 @@ public class SerialPortConnexion
 	{
 		try {
 			this.port.closePort();
-			System.out.println("Le port a été fermé");
+			System.out.println("Le port a ete ferme");
 		} catch (SerialPortException e) {e.printStackTrace();}
 		
 	}
@@ -71,7 +71,7 @@ public class SerialPortConnexion
 	/**
 	 * Entrees:byte[]
 	 * Sorties:void
-	 * Ecrit des données
+	 * Ecrit des donnï¿½es
 	 * */
 	public void write(byte[] message)	
 	{
@@ -97,7 +97,7 @@ public class SerialPortConnexion
 	/**
 	 * Entrees:void
 	 * Sorties:byte[]
-	 * Lit des données
+	 * Lit des donnees
 	 * */
 	public byte[] read()
 	{
@@ -106,7 +106,6 @@ public class SerialPortConnexion
 		try {
 			Thread.sleep(500);
 			ordre = port.readBytes();
-			//ordre = this.port.readBytes(translator.TAILLE_TRAME_DATA);
 		} catch (SerialPortException | InterruptedException e) {e.printStackTrace();}
 		return ordre;
 	}

@@ -27,24 +27,22 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 		this.running=false;
 	}
 
-	public void envoyerOrdre(Ordre o)
+	public void envoyerOrdre(Ordre o, int id)
 	{
 		byte[] valeurs_envoie = translator.ordreToBytes(o);		
 		this.port.write2(valeurs_envoie);		
 		System.out.println("ORDRE :"+o.toString());
-		this.gestionaire_de_requetes.updateOrdre();
+		this.gestionaire_de_requetes.updateOrdre(id);
 	}
 	
-	public boolean lireDonnee()
+	public Data lireDonnee()
 	{
 		byte[] valeurs_lues = this.port.read();
-		if(valeurs_lues==null) return false;
+		if(valeurs_lues==null) return null;
 		Data d = translator.bytesToData(valeurs_lues);
-		//if(d==null){return false;}
-		System.out.println("===>Lire");
 		System.out.println("DATA : "+d.toString());
-		this.gestionaire_de_requetes.setData(d.getIdDevice(), d.getLevel(), d.getState(), d.getLevelpower());
-		return true;
+		this.gestionaire_de_requetes.setData(d);
+		return d;
 	}
 	
 	
@@ -75,15 +73,13 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 		if(arg0.getEventType()==SerialPortEvent.RXCHAR)
 		{
 			System.out.println(">Debut action");
-			boolean read = this.lireDonnee();
-			if(read)
+			Data read = this.lireDonnee();
+			if(read!=null)
 			{
-				Ordre o = this.gestionaire_de_requetes.getOrder();
-				//Ordre o = new Ordre("36", new Date().toString(), new Time(15, 37, 50).toString(), "5");
+				Ordre o = this.gestionaire_de_requetes.getOrder(read.getIdDevice());
 				System.out.println("===>Envoie de l'ordre : ");
 				try {sleep(10000);} catch (InterruptedException e) {e.printStackTrace();}
-				this.envoyerOrdre(o);
-				//this.lireDonnee2();
+				this.envoyerOrdre(o,read.getIdDevice());
 			}
 			System.out.println("fin action");
 		}

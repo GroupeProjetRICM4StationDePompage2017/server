@@ -11,6 +11,8 @@ import ordre.Ordre;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
+import ecoute.Data;
+
 
 public class SQL {
 
@@ -25,8 +27,8 @@ public class SQL {
 		this.connexion = null;
 		try {
 		    connexion = (Connection) DriverManager.getConnection( MaBD.getUrl(), MaBD.getUtilisateur(), MaBD.getMotDePasse());
-		    System.out.println("Vous etes bien connecté");
-		} catch ( SQLException e ) {System.out.println("Erreur lors de la connexion");}
+		    System.out.println("Vous etes bien connecte");
+		} catch ( SQLException e ) {System.out.println("Erreur lors de la connexion : ");e.printStackTrace();}
 	}
 	
 	public void fermutureConnexion()
@@ -34,21 +36,21 @@ public class SQL {
 		if ( this.connexion != null )
 		{
 			try {this.connexion.close();} catch ( SQLException ignore ) {}
-			System.out.println("La connexion a été fermé");
+			System.out.println("La connexion a ete fermee");
 		}
 	}
 	
-	public Ordre getOrder()
+	public Ordre getOrder(int id)
 	{
 		try 
 		{
 			Statement statement = (Statement) connexion.createStatement();
 			
-			String requete = "SELECT * FROM ordres WHERE is_executed=0";
+			String requete = "SELECT * FROM ordres WHERE is_executed=0 and idDevice="+id+";";
 			//String requete = "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE is_executed=0)";
 			//"SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE level_require = (SELECT MAX(level_require) FROM ordres WHERE is_executed=0))";
 			
-			ResultSet resultat = statement.executeQuery("SELECT * FROM ordres WHERE is_executed=0;");
+			ResultSet resultat = statement.executeQuery(requete);
 			resultat.next();
 			
 			if(resultat==null){return null;}
@@ -62,29 +64,25 @@ public class SQL {
 		return null;
 	}
 	
-	public void updateOrdre()
+	public void updateOrdre(int id)
 	{
 		try 
 		{
 			Statement statement = (Statement) connexion.createStatement();	
-			int statut = statement.executeUpdate( "UPDATE ordres SET is_executed=1 WHERE is_executed=0 ;" );
+			int statut = statement.executeUpdate( "UPDATE ordres SET is_executed=1 WHERE is_executed=0 and idDevice="+id+";" );
 			statement.close();
 		} catch (SQLException e) {e.printStackTrace();}
 	}
 	
-	public void setData(int id,int level,int state,int levelb)
+	public void setData(Data d)
 	{
 		try 
 		{
-			if(level>=0 && level<9 && levelb>=0 && levelb<11)
-			{
-				Date date = new Date();
-				Statement statement = (Statement) connexion.createStatement();
-				String requete = "INSERT INTO cuvemeasure VALUES ("+id+",\'"+formaterDate.format(date).toString()+"\',\'"+formaterTime.format(date).toString()+"\',"+level+","+state+","+levelb+");";
-				int statut = statement.executeUpdate( requete );
-				statement.close();
-			}
-			
+			Date date = new Date();
+			Statement statement = (Statement) connexion.createStatement();
+			String requete = "INSERT INTO cuvemeasure VALUES ("+d.getIdDevice()+",\'"+formaterDate.format(date).toString()+"\',\'"+formaterTime.format(date).toString()+"\',"+d.getLevel()+","+d.getState()+","+d.getLevelpower()+");";
+			int statut = statement.executeUpdate( requete );
+			statement.close();
 			
 		} catch (SQLException e) {e.printStackTrace();}
 		
