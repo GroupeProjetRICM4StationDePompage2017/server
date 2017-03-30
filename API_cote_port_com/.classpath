@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jssc.jar"/>
 	<classpathentry kind="lib" path="mysql-connector-java-5.1.41-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Héloïse/Downloads/jSSC-2.8.0-Release/jSSC-2.8.0-Release/jssc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

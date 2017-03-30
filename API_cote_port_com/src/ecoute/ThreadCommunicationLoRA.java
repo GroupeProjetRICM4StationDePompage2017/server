@@ -30,9 +30,13 @@ public class ThreadCommunicationLoRA extends Thread implements SerialPortEventLi
 	public void envoyerOrdre(Ordre o, int id)
 	{
 		byte[] valeurs_envoie = translator.ordreToBytes(o);		
+		
 		this.port.write2(valeurs_envoie);		
-		System.out.println("ORDRE :"+o.toString());
-		this.gestionaire_de_requetes.updateOrdre(id);
+		if(o!=null)
+		{   System.out.println("ORDRE :"+o.toString());
+			this.gestionaire_de_requetes.updateOrdre(id);
+		}
+		else{System.out.println("Pas d'ordre pour cette device");}
 	}
 	
 	public Data lireDonnee()

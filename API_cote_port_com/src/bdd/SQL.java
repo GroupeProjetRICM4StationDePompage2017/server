@@ -47,13 +47,16 @@ public class SQL {
 			Statement statement = (Statement) connexion.createStatement();
 			
 			String requete = "SELECT * FROM ordres WHERE is_executed=0 and idDevice="+id+";";
-			//String requete = "SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE is_executed=0)";
-			//"SELECT * FROM ordres WHERE idOrdre = (SELECT MAX(idOrdre) FROM ordres WHERE level_require = (SELECT MAX(level_require) FROM ordres WHERE is_executed=0))";
 			
 			ResultSet resultat = statement.executeQuery(requete);
 			resultat.next();
 			
-			if(resultat==null){return null;}
+			
+			if(resultat.getFetchSize()==0)
+			{
+				statement.close();
+				return null;
+			}
 			Ordre o = new Ordre(resultat.getString( "idDevice" ), resultat.getString( "date" ), resultat.getString( "time" ), resultat.getString( "level_require" ));
 			statement.close();
 			

@@ -13,7 +13,7 @@ public class translator {
 	private static final int OCTET_NIVEAU_P2 = 2;
 	private static final int OCTET_ETAT_BATERIE = 2;
 	
-	private static final int OCTET_ODRE_ID = 0;
+	private static final int OCTET_ORDRE_ID = 0;
 	private static final int OCTET_ORDRE_IDR = 1;
 	private static final int OCTET_ORDRE_NIVEAU = 2;
 	
@@ -36,13 +36,13 @@ public class translator {
 		byte[] valeurs_envoie = new byte[TAILLE_TRAME_ORDRE];
 		if(o == null)
 		{
-			valeurs_envoie[OCTET_ODRE_ID] = 0;
+			valeurs_envoie[OCTET_ORDRE_ID] = 0;
 			valeurs_envoie[OCTET_ORDRE_IDR] = 0;
 			valeurs_envoie[OCTET_ORDRE_NIVEAU] = 0;
 		}
 		else
 		{
-			valeurs_envoie[OCTET_ODRE_ID] = (byte) new Byte(o.getIdDevice());
+			valeurs_envoie[OCTET_ORDRE_ID] = (byte) new Byte(o.getIdDevice());
 			valeurs_envoie[OCTET_ORDRE_IDR] = (byte) 0x55;
 			valeurs_envoie[OCTET_ORDRE_NIVEAU] = (byte) ((o.getLevel_require()<<OFFSET_NIVEAU_ORDRE)|MASK_ORDRE);
 		}
