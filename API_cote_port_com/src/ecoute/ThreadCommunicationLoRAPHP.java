@@ -1,18 +1,30 @@
 package ecoute;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Time;
+import java.util.Date;
+
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
-import ordre.Ordre;
-import bdd.BDD;
 import bdd.SQL;
+import ordre.Ordre;
+import jssc.SerialPortEvent;
+import ordre.Ordre;
+import bdd.PHP;
 
-public class ThreadCommunicationLoRA  extends Thread implements SerialPortEventListener  {
-	private BDD gestionaire_de_requetes;
+public class ThreadCommunicationLoRAPHP extends Thread implements SerialPortEventListener {
+	
+	private PHP gestionaire_de_requetes;
 	private SerialPortConnexion port;
 	private boolean running;
 	
-	public ThreadCommunicationLoRA(String  nom, BDD bdd){
-		this.gestionaire_de_requetes = bdd;
+	public ThreadCommunicationLoRAPHP(String  nom) {
+		this.gestionaire_de_requetes = new PHP();
 		this.port = new SerialPortConnexion(nom);
 		this.running=false;
 	}
@@ -43,7 +55,6 @@ public class ThreadCommunicationLoRA  extends Thread implements SerialPortEventL
 	public void run()
 	{
 		this.running=true;
-		this.gestionaire_de_requetes.connexion();
 		this.port.ouvrirPort();
 		this.port.listener(this);
 		while(this.running)
@@ -59,7 +70,6 @@ public class ThreadCommunicationLoRA  extends Thread implements SerialPortEventL
 	{
 		this.running=false;
 		this.port.fermerPort();
-		this.gestionaire_de_requetes.fermutureConnexion();
 	}
 
 	@Override

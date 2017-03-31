@@ -14,7 +14,7 @@ import com.mysql.jdbc.Statement;
 import ecoute.Data;
 
 
-public class SQL {
+public class SQL implements BDD {
 
 	private SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat formaterTime = new SimpleDateFormat("kk:mm:ss");

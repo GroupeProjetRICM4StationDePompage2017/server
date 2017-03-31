@@ -4,7 +4,7 @@ import java.util.Random;
 
 import ordre.Ordre;
 import bdd.SQL;
-import ecoute.ThreadCommunicationLoRA;
+import ecoute.ThreadCommunicationLoRASQL;
 
 //http://javadox.com/org.scream3r/jssc/2.8.0/javadoc/jssc/package-summary.html
 public class ProgrammePrincipale {
@@ -15,7 +15,7 @@ public class ProgrammePrincipale {
 			
 			if(args.length>=1)
 			{
-				ThreadCommunicationLoRA lora = new ThreadCommunicationLoRA(args[0]);
+				ThreadCommunicationLoRASQL lora = new ThreadCommunicationLoRASQL(args[0]);
 				lora.start();
 				lora.join();
 				lora.stopThread();

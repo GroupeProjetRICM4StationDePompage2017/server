@@ -48,5 +48,10 @@ public class Data
 	{
 		return this.idDevice+"-"+this.state+"-"+this.levelMax+"-"+this.level+"-"+this.levelpower;
 	}
+	
+	public String postParameter()
+	{
+		return "id="+this.idDevice+"&state="+this.state+"&level="+this.level+"&levelb="+this.levelpower;
+	}
 
 }

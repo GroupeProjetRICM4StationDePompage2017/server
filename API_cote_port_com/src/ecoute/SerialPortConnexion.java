@@ -105,7 +105,9 @@ public class SerialPortConnexion
 		byte[] ordre = null;
 		try {
 			Thread.sleep(500);
-			ordre = port.readBytes();
+			//ordre = port.readBytes();
+			//ordre = port.readBytes(translator.TAILLE_TRAME_DATA+1);
+			ordre = port.readBytes(translator.TAILLE_TRAME_DATA+2);
 		} catch (SerialPortException | InterruptedException e) {e.printStackTrace();}
 		return ordre;
 	}

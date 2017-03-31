@@ -1,18 +1,30 @@
 package ecoute;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ordre.Ordre;
 
 public class translator {
 	
 	public static final int TAILLE_TRAME_DATA = 3;
 	private static final int TAILLE_TRAME_ORDRE = 3;
-	private static final int OCTET_ID = 0;
-	private static final int OCTET_ETAT_POMPE = 1;
-	private static final int OCTET_NOMBRE_DE_NIVEAU = 1;
-	private static final int OCTET_NIVEAU_P1 = 1;
-	private static final int OCTET_NIVEAU_P2 = 2;
-	private static final int OCTET_ETAT_BATERIE = 2;
 	
+	//DATA
+	//private static final int OCTET_ID = 0;
+	private static final int OCTET_ID = 1;
+	//private static final int OCTET_ETAT_POMPE = 1;
+	private static final int OCTET_ETAT_POMPE = 2;
+	//private static final int OCTET_NOMBRE_DE_NIVEAU = 1;
+	private static final int OCTET_NOMBRE_DE_NIVEAU = 2;
+	//private static final int OCTET_NIVEAU_P1 = 1;
+	private static final int OCTET_NIVEAU_P1 = 2;
+	//private static final int OCTET_NIVEAU_P2 = 2;
+	private static final int OCTET_NIVEAU_P2 = 3;
+	//private static final int OCTET_ETAT_BATERIE = 2;
+	private static final int OCTET_ETAT_BATERIE = 3;
+	
+	//ORDRE
 	private static final int OCTET_ORDRE_ID = 0;
 	private static final int OCTET_ORDRE_IDR = 1;
 	private static final int OCTET_ORDRE_NIVEAU = 2;
@@ -60,6 +72,25 @@ public class translator {
 		
 		Data donnees = new Data(id,state,levelMax,level,levelb);
 		return donnees;
+	}
+	
+	public static Ordre JSONtoOrder(String json)
+	{
+		try 
+		{
+			JSONObject obj = new JSONObject(json);
+			String msg = obj.getString("message");
+			if(msg.equals("True"))
+			{
+				JSONObject value = obj.getJSONObject("value");
+				String id = value.getString("idDevice");
+				return new Ordre(value.getString("idDevice"), value.getString("date"), value.getString("time"), value.getString("level_require"));
+			}
+			
+		} catch (JSONException e) {e.printStackTrace();}
+		
+		
+		return null;
 	}
 
 }

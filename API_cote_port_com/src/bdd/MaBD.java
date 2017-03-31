@@ -9,6 +9,15 @@ public class MaBD {
 	private static String motDePasse = "";
 	//private static String motDePasse = "pompeCo";
 	
+	private static String mdpJardinier = "pompe";
+	private static String LoginJardinier = "lejardinier";
+	
+	public static String getMdpJardinier() {
+		return mdpJardinier;
+	}
+	public static String getLoginJardinier() {
+		return LoginJardinier;
+	}
 	public static String getUrl() {
 		return url;
 	}

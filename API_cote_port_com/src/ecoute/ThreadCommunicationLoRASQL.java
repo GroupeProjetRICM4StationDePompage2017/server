@@ -1,18 +1,28 @@
 package ecoute;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Time;
+import java.util.Date;
+
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
-import ordre.Ordre;
-import bdd.BDD;
 import bdd.SQL;
+import ordre.Ordre;
 
-public class ThreadCommunicationLoRA  extends Thread implements SerialPortEventListener  {
-	private BDD gestionaire_de_requetes;
+public class ThreadCommunicationLoRASQL extends Thread implements SerialPortEventListener
+{
+	
+	private SQL gestionaire_de_requetes;
 	private SerialPortConnexion port;
 	private boolean running;
 	
-	public ThreadCommunicationLoRA(String  nom, BDD bdd){
-		this.gestionaire_de_requetes = bdd;
+	public ThreadCommunicationLoRASQL(String  nom) {
+		this.gestionaire_de_requetes = new SQL();
 		this.port = new SerialPortConnexion(nom);
 		this.running=false;
 	}
