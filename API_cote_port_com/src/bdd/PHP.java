@@ -32,9 +32,9 @@ public class PHP implements BDD {
 	/**
 	 * Les URL des différentes page
 	 */
-	private final static String URL_GET_ORDRE = "http://192.168.1.15/server/getOrdre.php";
-	private final static String URL_SET_DATA = "http://192.168.1.15/server/ajouter_valeur.php";
-	private final static String URL_UPDATE_ORDRE = "http://192.168.1.15/server/updateOrdre.php";
+	private final static String URL_GET_ORDRE = "http://192.168.1.15/getOrdre.php";
+	private final static String URL_SET_DATA = "http://192.168.1.15/ajouter_valeur.php";
+	private final static String URL_UPDATE_ORDRE = "http://192.168.1.15/updateOrdre.php";
 	
 	
 	
