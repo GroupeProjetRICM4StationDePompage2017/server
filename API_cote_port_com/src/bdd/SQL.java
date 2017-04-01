@@ -14,14 +14,26 @@ import com.mysql.jdbc.Statement;
 import ecoute.Data;
 
 
+/**
+ * @author Héloïse
+ *
+ */
 public class SQL implements BDD {
 
-	private SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd");
-    private SimpleDateFormat formaterTime = new SimpleDateFormat("kk:mm:ss");
+	
+	/**
+	 * Permet la connexion avec la base de donnee
+	 */
 	private Connection connexion;
 	
+	/**
+	 * Constructeur
+	 */
 	public SQL() {}
 	
+	/* (non-Javadoc)
+	 * @see bdd.BDD#connexion()
+	 */
 	public void connexion()
 	{
 		this.connexion = null;
@@ -31,6 +43,9 @@ public class SQL implements BDD {
 		} catch ( SQLException e ) {System.out.println("Erreur lors de la connexion : ");e.printStackTrace();}
 	}
 	
+	/* (non-Javadoc)
+	 * @see bdd.BDD#fermutureConnexion()
+	 */
 	public void fermutureConnexion()
 	{
 		if ( this.connexion != null )
@@ -40,6 +55,9 @@ public class SQL implements BDD {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see bdd.BDD#getOrder(int)
+	 */
 	public Ordre getOrder(int id)
 	{
 		try 
@@ -67,6 +85,9 @@ public class SQL implements BDD {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see bdd.BDD#updateOrdre(int)
+	 */
 	public void updateOrdre(int id)
 	{
 		try 
@@ -77,6 +98,9 @@ public class SQL implements BDD {
 		} catch (SQLException e) {e.printStackTrace();}
 	}
 	
+	/* (non-Javadoc)
+	 * @see bdd.BDD#setData(ecoute.Data)
+	 */
 	public void setData(Data d)
 	{
 		try 

@@ -5,44 +5,58 @@ import org.json.JSONObject;
 
 import ordre.Ordre;
 
-public class translator {
+/**
+ * @author Héloïse
+ *
+ */
+public class Translator {
 	
-	public static final int TAILLE_TRAME_DATA = 3;
+	/**
+	 * Taille des trames
+	 * */
+	public static final int TAILLE_TRAME_DATA = 4;
 	private static final int TAILLE_TRAME_ORDRE = 3;
 	
+	/**
+	 * Numero de l'octet ou se trouve la donnee
+	 * */
 	//DATA
-	//private static final int OCTET_ID = 0;
 	private static final int OCTET_ID = 1;
-	//private static final int OCTET_ETAT_POMPE = 1;
 	private static final int OCTET_ETAT_POMPE = 2;
-	//private static final int OCTET_NOMBRE_DE_NIVEAU = 1;
 	private static final int OCTET_NOMBRE_DE_NIVEAU = 2;
-	//private static final int OCTET_NIVEAU_P1 = 1;
 	private static final int OCTET_NIVEAU_P1 = 2;
-	//private static final int OCTET_NIVEAU_P2 = 2;
 	private static final int OCTET_NIVEAU_P2 = 3;
-	//private static final int OCTET_ETAT_BATERIE = 2;
 	private static final int OCTET_ETAT_BATERIE = 3;
 	
 	//ORDRE
 	private static final int OCTET_ORDRE_ID = 0;
 	private static final int OCTET_ORDRE_IDR = 1;
 	private static final int OCTET_ORDRE_NIVEAU = 2;
-	
 	private static final int MASK_ETAT_POMPE = 0x1;
+	
+	/**
+	 * MASK a appliquer sur l'octet pour recuperer la donne
+	 */
 	private static final int MASK_NOMBRE_DE_NIVEAU = 0x1F;
 	private static final int MASK_NIVEAU_P1 = 0x3;
 	private static final int MASK_NIVEAU_P2 = 0x7;
 	private static final int MASK_ETAT_BATERIE = 0xF;
-	
 	private static final int MASK_ORDRE = 4;
 	
+	/**
+	 * Offset pour reupperer la donnee
+	 */
 	private static final int OFFSET_ETAT_POMPE =7;
 	private static final int OFFSET_NOMBRE_DE_NIVEAU = 2;
 	private static final int OFFSET_NIVEAU_P1 = 3;
 	private static final int OFFSET_NIVEAU_P2 = 5;
 	private static final int OFFSET_NIVEAU_ORDRE = 3;
 	
+	/**
+	 * Transforme un ordre en tableau de byte
+	 * @param o
+	 * @return
+	 */
 	public static byte[] ordreToBytes(Ordre o)
 	{
 		byte[] valeurs_envoie = new byte[TAILLE_TRAME_ORDRE];
@@ -61,6 +75,11 @@ public class translator {
 		return valeurs_envoie;
 	}
 	
+	/**
+	 * tranforme un tableau de byte en data
+	 * @param b
+	 * @return
+	 */
 	public static Data bytesToData(byte[] b)
 	{
 		
@@ -74,6 +93,11 @@ public class translator {
 		return donnees;
 	}
 	
+	/**
+	 * transforme du json en ordre
+	 * @param json
+	 * @return
+	 */
 	public static Ordre JSONtoOrder(String json)
 	{
 		try 

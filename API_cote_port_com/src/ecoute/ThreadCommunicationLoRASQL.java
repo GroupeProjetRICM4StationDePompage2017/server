@@ -14,22 +14,42 @@ import jssc.SerialPortEventListener;
 import bdd.SQL;
 import ordre.Ordre;
 
+/**
+ * @author Héloïse
+ *
+ */
 public class ThreadCommunicationLoRASQL extends Thread implements SerialPortEventListener
 {
 	
+	/**
+	 * 
+	 */
 	private SQL gestionaire_de_requetes;
+	/**
+	 * 
+	 */
 	private SerialPortConnexion port;
+	/**
+	 * 
+	 */
 	private boolean running;
 	
+	/**
+	 * @param nom
+	 */
 	public ThreadCommunicationLoRASQL(String  nom) {
 		this.gestionaire_de_requetes = new SQL();
 		this.port = new SerialPortConnexion(nom);
 		this.running=false;
 	}
 
+	/**
+	 * @param o
+	 * @param id
+	 */
 	public void envoyerOrdre(Ordre o, int id)
 	{
-		byte[] valeurs_envoie = translator.ordreToBytes(o);		
+		byte[] valeurs_envoie = Translator.ordreToBytes(o);		
 		
 		this.port.write2(valeurs_envoie);		
 		if(o!=null)
@@ -39,17 +59,23 @@ public class ThreadCommunicationLoRASQL extends Thread implements SerialPortEven
 		else{System.out.println("Pas d'ordre pour cette device");}
 	}
 	
+	/**
+	 * @return
+	 */
 	public Data lireDonnee()
 	{
 		byte[] valeurs_lues = this.port.read();
 		if(valeurs_lues==null) return null;
-		Data d = translator.bytesToData(valeurs_lues);
+		Data d = Translator.bytesToData(valeurs_lues);
 		System.out.println("DATA : "+d.toString());
 		this.gestionaire_de_requetes.setData(d);
 		return d;
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run()
 	{
 		this.running=true;
@@ -65,6 +91,9 @@ public class ThreadCommunicationLoRASQL extends Thread implements SerialPortEven
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void stopThread()
 	{
 		this.running=false;
@@ -72,6 +101,9 @@ public class ThreadCommunicationLoRASQL extends Thread implements SerialPortEven
 		this.gestionaire_de_requetes.fermutureConnexion();
 	}
 
+	/* (non-Javadoc)
+	 * @see jssc.SerialPortEventListener#serialEvent(jssc.SerialPortEvent)
+	 */
 	@Override
 	public void serialEvent(SerialPortEvent arg0) {
 		if(arg0.getEventType()==SerialPortEvent.RXCHAR)

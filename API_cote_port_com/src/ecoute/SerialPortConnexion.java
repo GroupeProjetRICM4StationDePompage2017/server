@@ -14,30 +14,36 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 */
 /**
- * La classe qui suit permet d'ouvrir une connexion sur un port sï¿½rie. 
- * Paramï¿½tre par defaut: 9600 baudes, sans contrï¿½le de flux
+ * La classe qui suit permet d'ouvrir une connexion sur un port serie. 
+ * Parametre par defaut: 9600 baudes, sans controle de flux
  * 
- * Attributs:SerialPort port, CommPortIdentifier portID
+ * Attributs:SerialPort port, String portID
  * 
  * */
+/**
+ * @author Héloïse
+ *
+ */
 public class SerialPortConnexion
 {
 	private SerialPort port;
 	private String portID;
 	
-	/**Constructeur
-	 * @throws NoSuchPortException */
+
+	/**
+	 * Constructeur
+	 * @param nom
+	 */
 	public SerialPortConnexion(String nom) //throws NoSuchPortException
 	{
 		this.portID=nom;
 		this.port=null;	
 	}
-	
+
 	/**
-	 * Entrees:void
-	 * Sorties:void
-	 * Ouvre le port et vï¿½rifie que le port n'est pas utilisï¿½
-	 * */
+	 * Ouvre le port, attention une erreur sera souleve si le port est deja utilise
+	 * @return
+	 */
 	public Boolean ouvrirPort()
 	{
 		 boolean isOpen = false;	 
@@ -54,11 +60,10 @@ public class SerialPortConnexion
 		return isOpen;		
 	}
 	
+	
 	/**
-	 * Entrees:void
-	 * Sorties:void
-	 * Ferme la connexion
-	 * */
+	 * Fermer le port
+	 */
 	public void fermerPort()
 	{
 		try {
@@ -68,11 +73,11 @@ public class SerialPortConnexion
 		
 	}
 	
+	
 	/**
-	 * Entrees:byte[]
-	 * Sorties:void
-	 * Ecrit des donnï¿½es
-	 * */
+	 * Envoie un message sur le port
+	 * @param message
+	 */
 	public void write(byte[] message)	
 	{
 		try 
@@ -82,6 +87,10 @@ public class SerialPortConnexion
 		} catch (SerialPortException e) {e.printStackTrace();}
 	}
 	
+	/**
+	 * Envoie un message sur le port octet par octet
+	 * @param message
+	 */
 	public void write2(byte[] message)	
 	{
 		try 
@@ -95,23 +104,26 @@ public class SerialPortConnexion
 	}
 	
 	/**
-	 * Entrees:void
-	 * Sorties:byte[]
-	 * Lit des donnees
-	 * */
+	 * Lit un tableau de byte sur le port
+	 * @return
+	 */
 	public byte[] read()
 	{
 		
 		byte[] ordre = null;
 		try {
 			Thread.sleep(500);
-			//ordre = port.readBytes();
-			//ordre = port.readBytes(translator.TAILLE_TRAME_DATA+1);
-			ordre = port.readBytes(translator.TAILLE_TRAME_DATA+2);
+		    ordre = port.readBytes();
+			//ordre = port.readBytes(Translator.TAILLE_TRAME_DATA+1);
+			//ordre = port.readBytes(Translator.TAILLE_TRAME_DATA+2);
 		} catch (SerialPortException | InterruptedException e) {e.printStackTrace();}
 		return ordre;
 	}
 	
+	/**
+	 * Ajout d'unlistener sur le port
+	 * @param se
+	 */
 	public void listener(SerialPortEventListener se)
 	{
 		try {this.port.addEventListener(se);} catch (SerialPortException e) {e.printStackTrace();}
