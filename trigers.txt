@@ -1,6 +1,0 @@
-BEGIN
-IF (SELECT * FROM adherents WHERE login = NEW.login) NOT NULL THEN 
-	INSERT INTO Erreur (erreur) VALUES ('Erreur : cet utilisateur est un adhérent');
-END IF;
-END
-

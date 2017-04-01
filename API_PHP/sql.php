@@ -20,7 +20,8 @@ class SQL{
 		{
 			$isadherent = $this->identificationAdherents($log,$mdp);
 			if($isadherent==NULL)
-			{return NULL;}
+			{   
+				return NULL;}
 			return $isadherent;
 		}
 		return $isjardinier;
@@ -29,7 +30,7 @@ class SQL{
 	public function identificationJardinier($log,$mdp)
 	{
 		$mdpC = md5($mdp);
-		$reponse = $this->bdd->query('SELECT * FROM jardinier WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
+		$reponse = $this->bdd->query('SELECT * FROM pompe_connectee.jardinier WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
 		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
 		$reponse->closeCursor();
 		if(!($donnees))
@@ -43,7 +44,7 @@ class SQL{
 	public function identificationAdherents($log,$mdp)
 	{
 		$mdpC = md5($mdp);
-		$reponse = $this->bdd->query('SELECT * FROM adherents WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
+		$reponse = $this->bdd->query('SELECT * FROM pompe_connectee.adherents WHERE login =\''. $log.'\' and pwd = \''.$mdpC.'\'');
 		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
 		$reponse->closeCursor();
 
@@ -61,35 +62,43 @@ class SQL{
 	//==========================REQUETE==============================//
 	//===============================================================//
 	/*Obtenir la dernière valeur de la pompe*/
-	public function getLastData()
+	public function getLastData($id)
 	{
-		$statement = $this->bdd->prepare('SELECT * FROM cuvemeasure ORDER BY date DESC, time DESC');
+		$statement = $this->bdd->prepare('SELECT * FROM pompe_connectee.cuvemeasure WHERE idDevice='.$id.' ORDER BY date DESC, time DESC');
 		$statement->execute();
 		$donnees = $statement->fetch(PDO::FETCH_ASSOC);
+		if(!($donnees))
+		{
+			return NULL;
+		}
 	    return json_encode($donnees);
 
 	}
 
 	/*Obtenir les valeurs correspondant au mois $month*/
-	public function getMonthData($month,$year)
+	public function getMonthData($id,$month,$year)
 	{
 		$indice = 0;
 		$tableaux = array();
-		$reponse = $this->bdd->query('SELECT * FROM cuvemeasure WHERE MONTH(date) = \''.$month.'\' and YEAR(date) = \''.$year.'\' ORDER BY date,time');
+		$reponse = $this->bdd->query('SELECT * FROM pompe_connectee.cuvemeasure WHERE idDevice ='.$id.' and MONTH(date) = \''.$month.'\' and YEAR(date) = \''.$year.'\' ORDER BY date,time');
 		while ($donnees = $reponse->fetch(PDO::FETCH_ASSOC))
 		{
 			$tableaux[$indice] = $donnees;
 			$indice++;
 		}
 		$reponse->closeCursor();
+		if($tableaux==NULL)
+		{
+			return NULL;
+		}
 		return json_encode($tableaux);
 	}
 
 	/*Obtenir les 24 dernière valeur qui correspond au normalement à 24h*/
-	public function getLastHourData($nbvalue)
+	public function getLastHourData($id, $nbvalue)
 	{
 		$indice = 0;
-		$reponse = $this->bdd->query('SELECT * FROM cuvemeasure ORDER BY date DESC, time DESC');
+		$reponse = $this->bdd->query('SELECT * FROM pompe_connectee.cuvemeasure WHERE idDevice='.$id.' ORDER BY date DESC, time DESC');
 		$tableaux = array();
 		while (($donnees = $reponse->fetch(PDO::FETCH_ASSOC))&&$indice<$nbvalue)
 		{
@@ -97,14 +106,19 @@ class SQL{
 			$indice++;
 		}
 		$reponse->closeCursor();
+		if($tableaux==NULL)
+		{
+			return NULL;
+		}
 		return json_encode($tableaux);
 	}
 
 	/**/
-	public function getOrder()
+	public function getOrder($idDevice)
 	{
 		$indice = 0;
-		$reponse = $this->bdd->query('SELECT * FROM ordres WHERE is_executed=0 ORDER BY date DESC, time DESC;');
+		$arrayUser= array('id'=>$idDevice);
+		$reponse = $this->bdd->query('SELECT * FROM pompe_connectee.ordres WHERE is_executed=0 and idDevice='.$idDevice.' ORDER BY date DESC, time DESC;');
 		$donnees = $reponse->fetch(PDO::FETCH_ASSOC);
 		$reponse->closeCursor();
 		if(!($donnees))
@@ -113,6 +127,25 @@ class SQL{
 		}
 		return json_encode($donnees);
 	}
+	
+	public function getDevice()
+	{
+		$indice = 0;
+		$reponse = $this->bdd->query('SELECT DISTINCT idDevice FROM pompe_connectee.cuvemeasure;');
+		$tableaux = array();
+		while ($donnees = $reponse->fetch(PDO::FETCH_ASSOC))
+		{
+			$tableaux[$indice] = $donnees;
+			$indice++;
+		}
+		$reponse->closeCursor();
+		if($tableaux==NULL)
+		{
+			return NULL;
+		}
+		return json_encode($tableaux);
+	}
+
 
 	//===============================================================//
 	//===========================INSERT==============================//
@@ -130,13 +163,13 @@ class SQL{
 		$arrayUser= array('login'=>$log,'mdp'=>$mdpC,'nom'=>$nom,'pre'=>$pre);
 		if(strcmp($jar,'True')==0)
 		{
-			$req = $this->bdd->prepare('INSERT INTO jardinier VALUES (:login,:mdp,:nom,:pre)');
+			$req = $this->bdd->prepare('INSERT INTO pompe_connectee.jardinier VALUES (:login,:mdp,:nom,:pre)');
 			$res = $req->execute($arrayUser);
 			
 		}
 		else
 		{
-			$req = $this->bdd->prepare('INSERT INTO adherents VALUES (:login,:mdp,:nom,:pre)');
+			$req = $this->bdd->prepare('INSERT INTO pompe_connectee.adherents VALUES (:login,:mdp,:nom,:pre)');
 			$res = $req->execute($arrayUser);	
 		}
 		return $res;
@@ -150,7 +183,7 @@ class SQL{
 		{
 			$arrayData= array('id'=>$id,'date'=>$date,'time'=>$time,'level'=>$level,'state'=>$state,'levelb'=>$levelb);
 
-			$req = $this->bdd->prepare('INSERT INTO cuvemeasure VALUES (:id,:date,:time,:level,:state,:levelb)');
+			$req = $this->bdd->prepare('INSERT INTO pompe_connectee.cuvemeasure VALUES (:id,:date,:time,:level,:state,:levelb)');
 			$res = $req->execute($arrayData);
 		}
 		return $res;
@@ -167,7 +200,7 @@ class SQL{
 		if($levelrequire<9 and $levelrequire>=0)//le level est entre 0 et 8 et le level de la batere est entre 0 et 10
 		{
 			$arrayData= array('id'=>$id,'date'=>date("Y-m-d"),'time'=>date("H:i:s"),'levelr'=>$levelrequire);
-			$req = $this->bdd->prepare('INSERT INTO ordres(idDevice,date,time,level_require,is_executed) VALUES (:id,:date,:time,:levelr,0)');
+			$req = $this->bdd->prepare('INSERT INTO pompe_connectee.ordres(idDevice,date,time,level_require,is_executed) VALUES (:id,:date,:time,:levelr,0)');
 			$res = $req->execute($arrayData);	
 		}
 		return $res;
@@ -183,9 +216,23 @@ class SQL{
 		if($levelrequire<9 and $levelrequire>=0)//le level est entre 0 et 8 et le level de la batere est entre 0 et 10
 		{
 			$arrayData= array('id'=>$id,'levelr'=>$levelrequire);
-			$req = $this->bdd->prepare('UPDATE ordres SET idDevice =:id, level_require=:levelr WHERE is_executed=0 ;');
+			$req = $this->bdd->prepare('UPDATE pompe_connectee.ordres SET level_require=:levelr WHERE idDevice =:id and is_executed=0 ;');
 			$res = $req->execute($arrayData);	
 		}
+		return $res;
+	}
+	
+	function executedOrder($id,$login,$mdp)
+	{
+		$res = false;
+
+		if($this->identificationJardinier($login,$mdp)==NULL)
+		{	return $res;}
+
+		$arrayData= array('id'=>$id);
+		$req = $this->bdd->prepare('UPDATE pompe_connectee.ordres SET is_executed=1 WHERE is_executed=0 and idDevice =:id;');
+		$res = $req->execute($arrayData);	
+		
 		return $res;
 	}
 }

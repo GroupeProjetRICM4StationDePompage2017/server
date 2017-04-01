@@ -2,9 +2,9 @@
 
 Le programme est séparré en 2 dossiers:
 
-* **something** : permet de communiquer avec une carte LoRa branché en série
+* **API_cote_port_com** : permet de communiquer avec une carte LoRa branché en série
 
-* **something bis** : permet de communiquer avec la base de donnée via un set de fichier php.
+* **API_PHP** : permet de communiquer avec la base de donnée via un set de fichier php.
 
 Lien vers la page du projet :
 http://air.imag.fr/index.php/Projets-2016-2017-Station_de_pompage_connect%C3%A9e
