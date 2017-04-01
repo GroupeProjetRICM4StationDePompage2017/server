@@ -47,9 +47,9 @@ L'api retourne des fichiers sous format JSON
 
 | Lien | Resultat |
 | ---- | -------- |
-|http://stationpompeco2017.hopto.org/data.php| recupère la dernière mesure pour la devine numéro 36|
-|http://stationpompeco2017.hopto.org/data.php?periode=march&year=2016|recupère les valeur du mois de mars 2016 pour la device 36|
-|http://stationpompeco2017.hopto.org/data.php?id=1&periode=24|recupère les 24 dernière valeur pour la device 1|
+|http://stationpompeco2017.hopto.org/data.php | recupère la dernière mesure pour la devine numéro 36|
+|http://stationpompeco2017.hopto.org/data.php?periode=march&year=2016 |recupère les valeur du mois de mars 2016 pour la device 36|
+|http://stationpompeco2017.hopto.org/data.php?id=1&periode=24 |recupère les 24 dernière valeur pour la device 1|
 
 ### S’inscrire
 **Lien :** http://stationpompeco2017.hopto.org/inscription.php
